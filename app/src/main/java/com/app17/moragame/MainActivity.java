@@ -3,6 +3,7 @@ package com.app17.moragame;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -38,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isWin;
     private int score;
     private boolean gameOver = true;
+    private static final int SOUND_CORRECT = 0;
+    private static final int SOUND_WRONG = 1;
+    private SoundPool soundPool;
+    private int[] soundResId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +52,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViews();
 
 
-
         computer = new Computer();
         computer.setOnComputerCompletedListener(this);
+        soundPool = new SoundPool.Builder().setMaxStreams(10).build();
+        soundResId = new int[]{
+                soundPool.load(this, R.raw.correct, 1),
+                soundPool.load(this, R.raw.wrong, 1)
+        };
 
         timer = new Timer(3000, true, new Timer.OnTimerListener() {
             @Override
@@ -85,6 +94,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (View v : views) {
             v.setOnClickListener(this);
         }
+    }
+
+    public void playSound(int index) {
+        soundPool.play(soundResId[index], 1, 1, 1, 0, 1);
     }
 
     public void initGame() {
@@ -147,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         message.obj = String.valueOf(milliseconds / 1000);
         handler.sendMessage(message);
     }
+
 
     public void sendTimerMessage(long milliseconds, int what) {
         int seconds = (int) milliseconds / 1000;
@@ -252,29 +266,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void checkGameState() {
         int state = getWinState(player.getMora(), computer.getMora());
+
         if (state == EVEN) {
             Log.d(TAG, "checkGameState: " + "平手!");
         } else if (state == PLAYER_WIN) {
             isWin = true;
             score += 1;
             winCountText.setText(String.format("%03d", score));
+            playSound(SOUND_CORRECT);
             Log.d(TAG, "checkGameState: " + "玩家勝!");
         } else if (state == COMPUTER_WIN) {
+            playSound(SOUND_WRONG);
             player.setLife(player.getLife() - 1);
             String hart = " ";
+            int hartn=0;
             for (int i = 0; i < player.getLife(); i++) {
                 hart += "♥";
+                hartn+=1;
             }
             hartText.setText(hart);
-            Log.d(TAG, "hart: " + hart);
+            Log.d(TAG, "hart: " +hartn);
             Log.d(TAG, "checkGameState: " + "電腦勝!");
             if (player.getLife() == 0) {
                 gameOver = true;
                 return;
             }
         }
-
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -287,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                initGame();
             }
         }).start();
+
     }
 
 
@@ -331,7 +349,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
-
 
 
     public void nextRound() {
