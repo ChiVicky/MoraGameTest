@@ -205,11 +205,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="3"
-            android:textSize="168sp"
             android:textColor="@color/black"
+            android:textSize="168sp"
             android:textStyle="italic"
-            android:visibility="invisible"
-            android:typeface="sans">
+            android:typeface="sans"
+            android:visibility="invisible">
 
         </TextView>
 
