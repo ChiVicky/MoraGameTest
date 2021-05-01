@@ -2,7 +2,7 @@
     <string name="app_name">猜拳反應遊戲</string>
     <string name="start">遊戲開始</string>
     <string name="quit">遊戲結束</string>
-    <string name="round">ROUND 1</string>
+    <string name="round">ROUND</string>
     <string name="state">88連擊!</string>
     <string name="paper">布</string>
     <string name="scissors">剪刀</string>
