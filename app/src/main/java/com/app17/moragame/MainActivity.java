@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViews();
 
-        playerImage.setVisibility(View.INVISIBLE);
+
 
         computer = new Computer();
         computer.setOnComputerCompletedListener(this);
@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         roundText = findViewById(R.id.round_text);
         hartText = findViewById(R.id.hart_text);
         big_counter_text = findViewById(R.id.big_counter_text);
-
         View[] views = {scissorsBtn, rockBtn, paperBtn, startBtn, quitBtn};
         for (View v : views) {
             v.setOnClickListener(this);
@@ -106,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             timer.setAlive(false);
         }
         big_counter_text.setVisibility(View.VISIBLE);
-
+        playerImage.setVisibility(View.INVISIBLE);
         timer = new Timer(3000, true, new Timer.OnTimerListener() {
             @Override
             public void onTick(long milliseconds) {
@@ -121,7 +120,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         timer.setStepMilliseconds(1000);
         timer.start();
         isPlayerRound = false;
+
+    }
+
+    public void startGame() {
         playerImage.setVisibility(View.INVISIBLE);
+        timer = new Timer(5000, true, new Timer.OnTimerListener() {
+            @Override
+            public void onTick(long milliseconds) {
+                sendTimerMessage(milliseconds, 3);
+            }
+
+            @Override
+            public void onTime(long milliseconds) {
+                sendTimerMessage(milliseconds, 4);
+            }
+        });
+        timer.setStepMilliseconds(50);
+        timer.start();
         computer.ai();
     }
 
@@ -316,22 +332,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    public void startGame() {
 
-        timer = new Timer(5000, true, new Timer.OnTimerListener() {
-            @Override
-            public void onTick(long milliseconds) {
-                sendTimerMessage(milliseconds, 3);
-            }
-
-            @Override
-            public void onTime(long milliseconds) {
-                sendTimerMessage(milliseconds, 4);
-            }
-        });
-        timer.setStepMilliseconds(50);
-        timer.start();
-    }
 
     public void nextRound() {
         if (isWin) {
